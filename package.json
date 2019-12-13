@@ -1,0 +1,23 @@
+{
+  "name": "jwtauth",
+  "version": "1.0.0",
+  "description": "JSON Web Token authorization API",
+  "main": "Main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Brandon Connors <bdc5435@rit.edu>",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt-nodejs": "0.0.3",
+    "body-parser": "^1.19.0",
+    "crypto": "^1.0.1",
+    "express": "^4.17.1",
+    "mysql": "^2.17.1",
+    "mysql2": "^2.0.2",
+    "promise-mysql": "^4.1.1",
+    "promise-mysql2": "^1.0.0",
+    "sjcl": "^1.0.8",
+    "uuid": "^3.3.3"
+  }
+}
