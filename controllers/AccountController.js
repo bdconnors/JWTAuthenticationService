@@ -1,11 +1,11 @@
 class AccountController{
-    constructor(database,accounts){
-        this.db = database;
+    constructor(accounts){
         this.accounts = accounts;
     }
 
-    signUp(req,res){
-        res.send(this.accounts.signUp(req.query));
+    async signUp(req,res){
+        const acc = await this.accounts.signUp(req.query).catch((e)=>{res.send(e)});
+        res.send(acc);
     }
     login(req,res){
         res.send(this.accounts.login(req.query));
@@ -15,4 +15,4 @@ class AccountController{
     }
 
 }
-module.exports = AuthenticationController;
+module.exports = AccountController;

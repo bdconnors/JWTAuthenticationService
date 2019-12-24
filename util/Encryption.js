@@ -5,10 +5,11 @@ class Encryption{
         this.objectFramework = objectFramework;
     }
     encrypt(data,saltRounds){
-        return this.standardFramework.hashSync(data,saltRounds);
+        const salt = this.standardFramework.genSaltSync(saltRounds);
+        return this.standardFramework.hashSync(data,salt);
     }
-    decrypt(){
-
+    compare(plainText,hash){
+        return this.standardFramework.compareSync(plainText,hash);
     }
     encryptObject(key,data){
         return this.objectFramework.encrypt(key,data);

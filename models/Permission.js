@@ -3,5 +3,8 @@ class Permission{
         this.appId = appId;
         this.permId = permId;
     }
+    toString(){
+        return JSON.stringify(this);
+    }
 }
 module.exports = Permission;

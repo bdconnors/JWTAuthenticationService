@@ -15,6 +15,7 @@ const Encryption = require('./util/Encryption');
 
 /**Import Data Access Components**/
 const PermissionFactory = require('./factories/PermissionFactory');
+const CredentialFactory = require('./factories/CredentialFactory');
 const AccountFactory = require('./factories/AccountFactory');
 const ApplicationFactory = require('./factories/ApplicationFactory');
 const HeaderFactory = require('./factories/HeaderFactory');
@@ -29,9 +30,14 @@ const ApplicationRepository = require('./repositories/ApplicationRepository');
 
 /**Import Service Components**/
 const TokenService = require('./services/TokenService');
+const AccountService = require('./services/AccountService');
+
+const ApplicationService = require('./services/ApplicationService');
 
 /**Import Controllers**/
 const TokenController = require('./controllers/TokenController');
+const AccountController = require('./controllers/AccountController');
+const ApplicationController = require('./controllers/ApplicationController');
 
 /**Import Server Components*/
 const Database = require('./Database');
@@ -43,6 +49,7 @@ let encoding;
 let encryption;
 
 let permissionFactory;
+let credentialFactory;
 let accountFactory;
 let applicationFactory;
 let headerFactory;
@@ -57,10 +64,14 @@ let accountRepo;
 let applicationRepo;
 
 /**Declare Service Components**/
+let accountService;
+let applicationService;
 let tokenService;
 
 /**Declare Controllers**/
 let tokenController;
+let accountController;
+let applicationController;
 
 /**Declare Server Components**/
 let db;
@@ -73,14 +84,22 @@ async function startServer(){
 }
 function initializeControllers(){
     tokenController = new TokenController(tokenService);
+    accountController = new AccountController(accountService);
+    applicationController = new ApplicationController(applicationService);
 }
 function initializeRoutes(){
     router = new Router(express);
     router.register('GET','/',function(req,res){res.send('index')});
-    router.register('GET','/getToken',tokenController.getToken.bind(tokenController));
+    router.register('GET','/api/tokens/getToken',tokenController.getToken.bind(tokenController));
+    router.register('POST','/api/applications/registerApp',applicationController.registerApp.bind(applicationController));
+    router.register('POST','/api/accounts/signUp',accountController.signUp.bind(accountController));
+    router.register('GET','/api/accounts/login',accountController.login.bind(accountController));
+
 }
 function initializeServices(){
     tokenService = new TokenService(applicationRepo,accountRepo,tokenBuilder,config.token);
+    accountService = new AccountService(accountRepo,encryption);
+    applicationService = new ApplicationService(applicationRepo);
 }
 function initializeUtilities(){
     encoding = new Encoding(crypto,config.encoding);
@@ -88,6 +107,7 @@ function initializeUtilities(){
 }
 function initializeFactories(){
     permissionFactory = new PermissionFactory();
+    credentialFactory = new CredentialFactory();
     accountFactory = new AccountFactory();
     applicationFactory = new ApplicationFactory();
     headerFactory = new HeaderFactory();
@@ -95,7 +115,7 @@ function initializeFactories(){
     tokenFactory = new TokenFactory();
 }
 function initializeBuilders(){
-    accountBuilder = new AccountBuilder(accountFactory,permissionFactory);
+    accountBuilder = new AccountBuilder(accountFactory,permissionFactory,credentialFactory);
     tokenBuilder = new TokenBuilder(encoding,encryption,headerFactory,claimFactory,tokenFactory)
 }
 async function initializeRepositories(){

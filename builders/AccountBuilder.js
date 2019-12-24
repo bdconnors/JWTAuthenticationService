@@ -1,10 +1,11 @@
 class AccountBuilder{
-    constructor(accountFactory,permissionFactory){
+    constructor(accountFactory,permissionFactory,credentialFactory){
         this.accounts = accountFactory;
         this.permissions = permissionFactory;
+        this.credentials = credentialFactory;
     }
-    build(id,firstName,lastName,email,password,permissions){
-        return this.accounts.make(id,firstName,lastName,email,password,permissions);
+    build(id,firstName,lastName,email,permissions){
+        return this.accounts.make(id,firstName,lastName,email,permissions);
     }
     buildMultiplePermissions(permData){
         const permissions = [];
@@ -16,6 +17,9 @@ class AccountBuilder{
     }
     buildPermission(appId,permId){
         return this.permissions.make(appId,permId);
+    }
+    buildCredential(accountId,password){
+        return this.credentials.make(accountId,password);
     }
 }
 module.exports = AccountBuilder;

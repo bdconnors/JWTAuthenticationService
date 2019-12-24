@@ -5,6 +5,13 @@ class ApplicationRepository{
         this.factory = applicationFactory;
         this.applications = [];
     }
+    async createApplication(name){
+        const result = await this.db.executePreparedStatement(this.SQL.registerApplication,[name]);
+        const rawApp = result[0][0][0];
+        const application = this.factory.make(rawApp.id,rawApp.name,rawApp.tokenkey);
+        this.applications.push(application);
+        return application;
+    }
     getById(id){
         return this.applications.find(app=>app.id === id);
     }

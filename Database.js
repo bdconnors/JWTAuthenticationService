@@ -20,16 +20,14 @@ class Database{
         })
     }
     async executePreparedStatement (statement,params){
-        const stmnt = await this.connection.prepare(statement).catch((e)=>{
+        console.log(statement);
+        console.log(params);
+        const stmnt = await this.connection.query(statement,params).catch((e)=>{
             console.log(e);
             console.log('error preparing query');
         });
-        const results = stmnt.execute(params).catch((e)=>{
-            console.log(e);
-            console.log('error executing prepared statement');
-        });
-        stmnt.close();
-        return results;
+        console.log(stmnt);
+        return stmnt;
 
     }
     async query(statement){
