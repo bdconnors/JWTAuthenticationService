@@ -76,7 +76,7 @@ class AccountRepository{
         return credentials
     }
     async getAllAccountData(){
-        const results = await this.db.query(this.SQL.getAllAccounts).catch((e) => {
+        const results = await this.db.execute(this.SQL.getAllAccounts).catch((e) => {
             console.log('error loading account data from db');
             console.log(e);
         });
@@ -84,7 +84,7 @@ class AccountRepository{
         return results[0][0];
     }
     async getAllAccountPermissionData(){
-        const permResults = await this.db.query(this.SQL.getAllAppPermissions).catch((e) => {
+        const permResults = await this.db.execute(this.SQL.getAllAppPermissions).catch((e) => {
             console.log('error loading account permission data from database');
             console.log(e);
         });

@@ -6,7 +6,7 @@ class ApplicationRepository{
         this.applications = [];
     }
     async createApplication(name){
-        const result = await this.db.executePreparedStatement(this.SQL.registerApplication,[name]);
+        const result = await this.db.execute(this.SQL.registerApplication,[name]);
         const rawApp = result[0][0][0];
         const application = this.factory.make(rawApp.id,rawApp.name,rawApp.tokenkey);
         this.applications.push(application);
@@ -28,7 +28,7 @@ class ApplicationRepository{
         return applications;
     }
     async getAllApplicationData(){
-        const results = await this.db.query(this.SQL.getAllApplications).catch((e) => {return e});
+        const results = await this.db.execute(this.SQL.getAllApplications).catch((e) => {return e});
         return results[0];
     }
 

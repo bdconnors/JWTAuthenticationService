@@ -127,7 +127,7 @@ async function initializeRepositories(){
     await accountRepo.load().catch((e)=>{console.log(e)});
 }
 async function initializeDatabaseConnection(){
-    db = new Database(MySQL,config.db);
+    db = new Database(MySQL,config.db,config.storedProcedures);
     await db.connect().catch((e)=>{console.log(e)});
 }
 async function run(){
