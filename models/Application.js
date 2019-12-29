@@ -1,11 +1,8 @@
 class Application{
-    constructor(id,name,tokenKey){
+    constructor(id,name,key){
         this.id = id;
         this.name = name;
-        this.tokenKey = tokenKey;
-    }
-    toString(){
-        return JSON.stringify(this);
+        this.key = key;
     }
 }
-module.exports = Application;
+module.exports =Application;

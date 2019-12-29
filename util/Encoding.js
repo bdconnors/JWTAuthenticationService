@@ -1,10 +1,10 @@
+const crypto = require('crypto');
 class Encoding{
-    constructor(framework,config){
-        this.framework = framework;
+    constructor(config){
         this.config = config;
     }
     encodeHMAC(input,key){
-        return this.framework.createHmac(this.config.HMAC.hash,key).update(input).digest(this.config.HMAC.inputType);
+        return crypto.createHmac(this.config.HMAC.hash,key).update(input).digest(this.config.HMAC.inputType);
     }
     encodeBase64(input){
         let output = "";

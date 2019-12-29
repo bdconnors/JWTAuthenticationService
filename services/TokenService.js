@@ -1,30 +1,30 @@
-class TokenService{
-    constructor(applicationRepo,accountRepo,tokenBuilder,config){
-        this.applications = applicationRepo;
-        this.accounts = accountRepo;
-        this.builder = tokenBuilder;
+const fs = require('fs');
+class TokenService {
+
+    constructor(config,encryption,builder) {
         this.config = config;
+        this.encryption = encryption;
+        this.builder = builder;
     }
-    getToken(params){
-
-        const account = this.accounts.getById(params.accId);
-        const application = this.applications.getById(parseInt(params.appId));
-        const key = application.tokenKey;
-        const permission = account.permissions.find(perm=>perm.appId === params.appId);
-
-        const header = this.builder.buildHeader(this.config.alg,this.config.typ);
-        const claim = this.builder.buildClaim(params.appId,params.accId,this.config.exp,permission,key);
-        const signature = this.builder.buildSignature(header,claim,key);
-
-        const token = this.builder.build(header,claim,signature);
-
-        return token.toString();
+    createToken(appId,account){
+        const secret = fs.readFileSync(this.config.key);
+        const permission = account.permissions.find((perm)=>{return perm.appId === appId});
+        this.builder.buildHeader(this.config.alg,this.config.typ);
+        this.builder.buildPayload(account.id,account.user,permission);
+        let token = this.builder.getToken();
+        return this.signToken(token);
     }
-    refreshToken(params){
-
+    signToken(token){
+        const secret = fs.readFileSync(this.config.key);
+        const headerString = this.encryption.encryptBase64(token.header.toString());
+        const payloadString =this.encryption.encryptBase64(token.payload.toString());
+        const signature = this.encryption.encryptHMAC(headerString+'.'+payloadString,secret);
+        token.header = headerString;
+        token.payload = payloadString;
+        this.builder.buildSignature(signature);
+        return this.builder.getToken();
     }
-    revokeToken(params){
 
-    }
 }
+
 module.exports = TokenService;

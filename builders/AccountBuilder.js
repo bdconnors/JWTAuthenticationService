@@ -1,25 +1,34 @@
+const Permission = require('../models/account/Permission');
+const Credentials = require('../models/account/Credentials');
+const User = require('../models/account/User');
+const Account = require('../models/account/Account');
+
 class AccountBuilder{
-    constructor(accountFactory,permissionFactory,credentialFactory){
-        this.accounts = accountFactory;
-        this.permissions = permissionFactory;
-        this.credentials = credentialFactory;
+    constructor(){
+        this.account = new Account();
     }
-    build(id,firstName,lastName,email,permissions){
-        return this.accounts.make(id,firstName,lastName,email,permissions);
+    buildId(id){
+        this.account.id = id;
     }
-    buildMultiplePermissions(permData){
-        const permissions = [];
-        for(let j = 0; j < permData.length; j++){
-            const curPermission = this.permissions.make(permData[j].appId,permData[j].permId);
-            permissions.push(curPermission);
+    buildUser(firstName,lastName){
+        this.account.user = new User(firstName,lastName);
+    }
+    buildCredentials(email,password){
+        this.account.credentials = new Credentials(email,password);
+    }
+
+    buildPermissions(permissionData){
+        this.account.permissions = [];
+        for(let i =0; i < permissionData.length; i++){
+            const data = permissionData[i];
+            const permission = new Permission(data.roleId,data.appId);
+            this.account.permissions.push(permission);
         }
-        return permissions;
     }
-    buildPermission(appId,permId){
-        return this.permissions.make(appId,permId);
+    getAccount(){
+        return this.account;
     }
-    buildCredential(accountId,password){
-        return this.credentials.make(accountId,password);
-    }
+
+
 }
 module.exports = AccountBuilder;

@@ -1,27 +1,30 @@
 class AccountService{
 
-    constructor(accounts,encryption){
-        this.accounts = accounts;
+    constructor(repo,encryption){
+        this.repo = repo;
         this.encryption = encryption;
     }
 
-    async signUp(params){
-        const hash = this.encryption.encrypt(params.password,11);
-        return await this.accounts.create(params.appId,params.permId,params.firstName,params.lastName,params.email,hash);
+    validate(email,password){
+        const account = this.repo.getAccountByEmail(email);
+        const accCredentials = account.credentials;
+        return this.encryption.compareData(password,accCredentials.password);
     }
-    login(params){
-        let success = false;
-        const email = params.email;
-        const password = params.password;
-        const account = this.accounts.getByEmail(email);
-        if(account) {
-            const credential = this.accounts.getCredential(account.id);
-            success = this.encryption.compare(password,credential.password);
+    async register(appId,roleId,firstName,lastName,email,password){
+        const accId = this.encryption.generateUUID();
+        const hash = this.encryption.encryptData(password,11);
+        const account = await this.repo.createAccount(appId,roleId,accId,firstName,lastName,email,hash);
+        return this.repo.addAccount(account);
+    }
+    authenticate(email,password){
+        const account = this.repo.getAccountByEmail(email);
+        const valid = this.encryption.compareData(password,account.credentials.password);
+        if(valid){
+            return account;
+        }else{
+            return false;
         }
-        return success;
     }
-    logOut(params){
 
-    }
 }
 module.exports = AccountService;

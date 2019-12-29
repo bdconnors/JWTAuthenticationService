@@ -1,27 +1,22 @@
+const TokenHeader = require('../models/token/TokenHeader');
+const TokenPayload = require('../models/token/TokenPayload');
+const Token = require('../models/token/Token');
+
 class TokenBuilder{
-    constructor(encoding,encryption,headerFactory,claimFactory,tokenFactory){
-        this.encoding = encoding;
-        this.encryption = encryption;
-        this.headers = headerFactory;
-        this.claims = claimFactory;
-        this.tokens = tokenFactory;
-    }
-    build(header,claim,signature){
-        return this.tokens.make(header.toString(),claim.toString(),signature);
+    constructor(){
+        this.token = new Token();
     }
     buildHeader(alg,typ){
-        const header = this.headers.make(alg,typ);
-        return this.encoding.encodeBase64(header.toString());
-
+        this.token.header = new TokenHeader(alg,typ);
     }
-    buildClaim(appId,accId,exp,permission,key){
-        const claim = this.claims.make(appId,accId,exp,permission);
-        const encryptedClaim = this.encryption.encryptObject(key,claim.toString());
-        return this.encoding.encodeBase64(encryptedClaim);
+    buildPayload(accountId,user,permission,expiration){
+        this.token.payload = new TokenPayload(accountId,user,permission,expiration);
     }
-    buildSignature(headerString,claimString,key){
-        const input = headerString+'.'+claimString;
-        return this.encoding.encodeHMAC(input,key);
+    buildSignature(signature){
+        this.token.signature = signature;
+    }
+    getToken(){
+        return this.token;
     }
 }
 module.exports = TokenBuilder;
